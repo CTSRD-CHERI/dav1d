@@ -32,6 +32,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#if defined(__CHERI_PURE_CAPABILITY__)
+#include <stdalign.h>
+#include <stddef.h>
+#endif   // __CHERI_PURE_CAPABILITY__
 
 #include "common/intops.h"
 #include "common/validate.h"
@@ -128,8 +132,14 @@ static int picture_alloc_with_edges(Dav1dContext *const c,
     assert(bpc > 0 && bpc <= 16);
 
     size_t extra = c->n_fc > 1 ? sizeof(atomic_int) * 2 : 0;
+#if defined(__CHERI_PURE_CAPABILITY__)
+    size_t aligned_size = __builtin_align_up(extra + sizeof(struct pic_ctx_context),
+                                             alignof(max_align_t));
+    Dav1dMemPoolBuffer *buf = dav1d_mem_pool_pop(c->pic_ctx_pool, aligned_size);
+#else   // !__CHERI_PURE_CAPABILITY__
     Dav1dMemPoolBuffer *buf = dav1d_mem_pool_pop(c->pic_ctx_pool,
                                                  extra + sizeof(struct pic_ctx_context));
+#endif  // !__CHERI_PURE_CAPABILITY__
     if (buf == NULL)
         return DAV1D_ERR(ENOMEM);
 
