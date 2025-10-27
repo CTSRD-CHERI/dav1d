@@ -51,7 +51,7 @@ struct MuxerContext {
     const char *filename;
     int framenum;
 #if defined(__CHERI_PURE_CAPABILITY__)
-    alignas(max_align_t) uint64_t priv_data[];
+    alignas(__max_align_t) uint64_t priv_data[];
 #else   // !__CHERI_PURE_CAPABILITY__
     uint64_t priv_data[];
 #endif  // !__CHERI_PURE_CAPABILITY__

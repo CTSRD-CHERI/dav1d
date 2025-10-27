@@ -134,7 +134,7 @@ static int picture_alloc_with_edges(Dav1dContext *const c,
     size_t extra = c->n_fc > 1 ? sizeof(atomic_int) * 2 : 0;
 #if defined(__CHERI_PURE_CAPABILITY__)
     size_t aligned_size = __builtin_align_up(extra + sizeof(struct pic_ctx_context),
-                                             alignof(max_align_t));
+                                             alignof(__max_align_t));
     Dav1dMemPoolBuffer *buf = dav1d_mem_pool_pop(c->pic_ctx_pool, aligned_size);
 #else   // !__CHERI_PURE_CAPABILITY__
     Dav1dMemPoolBuffer *buf = dav1d_mem_pool_pop(c->pic_ctx_pool,
